@@ -1,6 +1,57 @@
 .product {
   transition: all 0.45s;
 }
+
 .product:hover {
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.profile {
+  cursor: pointer;
+  width: 130px;
+}
+
+.profile-dropdown {
+  position: relative;
+}
+
+.profile-dropdown .dropdown-item {
+  position: absolute;
+  top: 50px;
+  left: 10px;
+  background: #fff;
+  z-index: 999;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  width: 100%;
+  padding: 10px;
+}
+
+.profile-dropdown:hover .dropdown-item {
+  z-index: 999;
+  background: #fff;
+}
+
+.profile-dropdown .dropdown-item li {
+  transition: all 0.3s;
+}
+
+.profile-dropdown .dropdown-item li:hover {
+  color: gray;
+  display: block;
+}
+
+.status-pending {
+  color: gray;
+}
+
+.status-ordered {
+  color: green;
+}
+
+.status-processing {
+  color: blue;
+}
+
+.status-cancelled {
+  color: red;
 }

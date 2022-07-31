@@ -7,10 +7,12 @@ const GlobalContext = React.createContext();
 
 const GlobalProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
+  const [user, setUser] = useState({});
+
   const api = useApiHelper();
   const router = useRouter();
 
-  useEffect(()=>{
+  useEffect(() => {
     // decide if logged in or not
     if (Cookies.get('accessToken')) {
       return setIsLoggedIn(true);
@@ -24,19 +26,35 @@ const GlobalProvider = ({ children }) => {
     deleteAllCookies();
     localStorage.clear();
     setIsLoggedIn(false);
-    api.logout().then(res=>{
+    api.logout().then(res => {
       router.push('/login')
-    }).catch(error=>{
+    }).catch(error => {
       Cookies.remove('accessToken');
       deleteAllCookies();
     })
   }
 
+  const getUserDetails = () => {
+    if (Cookies.get('accessToken')) {
+      api.getUser().then(res => {
+        setUser(res)
+      }).catch(error => {
+        console.log(error)
+      })
+    }
+  }
+
+  useEffect(() => {
+    getUserDetails();
+  }, [Cookies.get('accessToken')])
+
   return (
     <GlobalContext.Provider
       value={{
         isLoggedIn,
-        handleLogout
+        handleLogout,
+        user,
+        getUserDetails,
       }}
     >
       {children}
