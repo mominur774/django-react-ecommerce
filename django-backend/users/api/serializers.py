@@ -12,7 +12,8 @@ from allauth.account.utils import setup_user_email
 from rest_auth.serializers import PasswordResetSerializer
 
 
-from django.contrib.auth.forms import PasswordResetForm # It's customizable for both UID/TOKEN and URL
+# It's customizable for both UID/TOKEN and URL
+from django.contrib.auth.forms import PasswordResetForm
 # from allauth.account.forms import ResetPasswordForm # Allauth's which provide only alluth urls to reset password
 
 from users.models import User
@@ -21,7 +22,9 @@ from users.models import User
 class RESTPasswordSerializer(PasswordResetSerializer):
     # solved reset password error
     # password_reset_form_class = ResetPasswordForm # Only URL to reset password
-    password_reset_form_class = PasswordResetForm # counter part of django which provide UID/TOKEN even URL, which is customizeable
+    # counter part of django which provide UID/TOKEN even URL, which is customizeable
+    password_reset_form_class = PasswordResetForm
+
 
 class RESTSignupSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -30,6 +33,7 @@ class RESTSignupSerializer(serializers.ModelSerializer):
         help_text='Leave empty if no change needed',
         style={'input_type': 'password', 'placeholder': 'Password'}
     )
+
     class Meta:
         model = User
         fields = ('id', 'first_name', 'last_name', 'email', 'password')
@@ -65,7 +69,7 @@ class RESTSignupSerializer(serializers.ModelSerializer):
                     validated_data.get('email'),
                 ]
             ),
-            #user_type = 'author' # Place more built-in or custom fields there: is_staff=True etc
+            # user_type = 'author' # Place more built-in or custom fields there: is_staff=True etc
         )
         instance.set_password(validated_data.get('password'))
         instance.save()
@@ -78,7 +82,6 @@ class RESTSignupSerializer(serializers.ModelSerializer):
         return super().save()
 
 
-
 class CustomUserDetailSerializer(serializers.ModelSerializer):
     """
     User model w/o password
@@ -87,11 +90,9 @@ class CustomUserDetailSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'pk',
-            'username',
             'email',
             'first_name',
             'last_name',
             'email',
             'avatar',
         )
-

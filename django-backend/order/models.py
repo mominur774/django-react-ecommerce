@@ -2,8 +2,10 @@ from django.db import models
 from users.models import User
 from product.models import Cart
 import uuid
+from users.enum_helper import OrderStatus
 
 # Create your models here.
+
 
 class Billing(models.Model):
     user = models.ForeignKey(
@@ -38,6 +40,9 @@ class PlaceOrder(models.Model):
         on_delete=models.CASCADE
     )
     idempotency_key = models.UUIDField(default=uuid.uuid4, unique=True)
+    order_status = models.CharField(
+        max_length=255, choices=OrderStatus.choices, default="Pending")
+    ordered = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

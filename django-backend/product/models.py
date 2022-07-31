@@ -4,6 +4,7 @@ from users.models import User
 
 # Create your models here.
 
+
 class Product(models.Model):
     name = models.CharField(max_length=255)
     price = models.FloatField()
@@ -20,9 +21,9 @@ class Product(models.Model):
 
 class Cart(models.Model):
     user = models.ForeignKey(
-        User, 
+        User,
         on_delete=models.CASCADE,
-        null=True, 
+        null=True,
         blank=True
     )
     product = models.ForeignKey(
@@ -30,12 +31,13 @@ class Cart(models.Model):
         on_delete=models.CASCADE
     )
     quentity = models.IntegerField(default=1)
+    ordered = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     @property
     def total_price(self):
         return int(self.product.price) * self.quentity
-    
+
     def __str__(self):
         return f"{self.user} - {self.product}"
