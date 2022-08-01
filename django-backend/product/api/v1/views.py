@@ -1,4 +1,4 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, DestroyAPIView
 from product.models import Cart, Product
 from product.api.v1.serializers import CartSerializer, ProductSerializer, DecreseQuentitySerializer
 from rest_framework.permissions import AllowAny
@@ -47,3 +47,9 @@ class CartListView(ListAPIView):
 
     def get_queryset(self):
         return Cart.objects.filter(user=self.request.user, ordered=False)
+
+
+class DeleteCartView(DestroyAPIView):
+    serializer_class = CartSerializer
+    queryset = Cart.objects.all()
+    lookup_field = 'pk'

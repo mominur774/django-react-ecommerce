@@ -7,6 +7,7 @@ from django.conf import settings
 
 stripe.api_key = getattr(settings, 'STRIPE_SECRET_KEY', '')
 
+
 class CreatePaymentIntentSerializer(serializers.ModelSerializer):
     idempotency_key = serializers.UUIDField(write_only=True)
 
@@ -17,11 +18,12 @@ class CreatePaymentIntentSerializer(serializers.ModelSerializer):
             'stripe_response',
             'stripe_payment_intention_id',
         )
-    
+
     @transaction.atomic
     def create(self, validated_data):
         request = self.context['request']
-        order_obj = PlaceOrder.objects.get(idempotency_key=validated_data['idempotency_key'], user=request.user)
+        order_obj = PlaceOrder.objects.get(
+            idempotency_key=validated_data['idempotency_key'], user=request.user)
 
         try:
             payment_intent = stripe.PaymentIntent.create(
@@ -53,3 +55,34 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 class PaymentSucceededSerializer(serializers.Serializer):
     idempotency_key = serializers.UUIDField(write_only=True)
+
+
+class RefundPaymentIntent(serializers.ModelSerializer):
+    idempotency_key = serializers.UUIDField(write_only=True)
+
+    class Meta:
+        model = Payment
+        fields = '__all__'
+        read_only_fields = (
+            'stripe_response',
+            'stripe_payment_intention_id',
+        )
+
+    @transaction.atomic
+    def create(self, validated_data):
+        request = self.context['request']
+        order_obj = PlaceOrder.objects.get(
+            idempotency_key=validated_data['idempotency_key'], user=request.user)
+        payment = Payment.objects.get(
+            order__pk=order_obj.pk, user=request.user)
+        try:
+            refund = stripe.Refund.create(
+                payment_intent=payment.stripe_payment_intention_id,
+                amount=int(order_obj.cart.total_price) * 100,
+            )
+            payment.payment_succeeded = False
+            payment.save()
+            return payment
+
+        except Exception as e:
+            raise serializers.ValidationError(e)
