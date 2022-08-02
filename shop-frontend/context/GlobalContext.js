@@ -8,6 +8,7 @@ const GlobalContext = React.createContext();
 const GlobalProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
   const [user, setUser] = useState({});
+  const [cartCount, setCartCount] = useState();
 
   const api = useApiHelper();
   const router = useRouter();
@@ -44,9 +45,23 @@ const GlobalProvider = ({ children }) => {
     }
   }
 
+  const cartItems = () => {
+    if (Cookies.get('accessToken')) {
+      api.getCartList().then(res => {
+        setCartCount(res.count)
+      }).catch(error => {
+        console.log(error)
+      })
+    }
+  }
+
   useEffect(() => {
     getUserDetails();
   }, [Cookies.get('accessToken')])
+
+  useEffect(() => {
+    cartItems();
+  }, [])
 
   return (
     <GlobalContext.Provider
@@ -55,6 +70,8 @@ const GlobalProvider = ({ children }) => {
         handleLogout,
         user,
         getUserDetails,
+        cartItems,
+        cartCount
       }}
     >
       {children}

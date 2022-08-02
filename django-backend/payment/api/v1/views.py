@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from payment.api.v1.serializers import CreatePaymentIntentSerializer, PaymentSerializer, PaymentSucceededSerializer
+from payment.api.v1.serializers import CreatePaymentIntentSerializer, PaymentSerializer, PaymentSucceededSerializer, RefundPaymentIntent
 from payment.models import Payment
 from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.response import Response
@@ -10,7 +10,6 @@ from product.models import Cart
 
 class CreatePaymentIntent(CreateAPIView):
     serializer_class = CreatePaymentIntentSerializer
-    queryset = Payment.objects.all()
 
 
 class RetrievePaymentIntent(RetrieveAPIView):
@@ -42,3 +41,7 @@ class SetPaymentStatus(CreateAPIView):
         cart.ordered = True
         cart.save()
         return Response(status=status.HTTP_200_OK)
+
+
+class RefundPaymentIntentView(CreateAPIView):
+    serializer_class = RefundPaymentIntent

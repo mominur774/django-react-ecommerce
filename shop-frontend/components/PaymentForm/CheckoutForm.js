@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import {
   useStripe, useElements, PaymentElement,
   CardNumberElement, CardExpiryElement, CardCvcElement
@@ -6,6 +6,7 @@ import {
 import { useToasts } from 'react-toast-notifications';
 import { useRouter } from 'next/router';
 import useApiHelper from '../../api';
+import GlobalContext from '../../context/GlobalContext';
 
 const CheckoutForm = (props) => {
 
@@ -15,6 +16,7 @@ const CheckoutForm = (props) => {
   const { addToast } = useToasts();
   const router = useRouter();
   const api = useApiHelper();
+  const gContext = useContext(GlobalContext);
 
   const [formData, setFormData] = useState({});
   const [amount, setAmount] = useState();
@@ -68,6 +70,7 @@ const CheckoutForm = (props) => {
       });
       if (!error) {
         api.setPaymentStatus({ 'idempotency_key': props.id }).then(res => {
+          gContext.cartItems()
           setLoading(false);
           addToast('Payment succeeded!', { 'appearance': 'success' })
           router.push('/')

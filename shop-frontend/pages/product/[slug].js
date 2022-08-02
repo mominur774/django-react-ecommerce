@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import useApiHelper from '../../api';
 import { NEXT_PUBLIC_APP_API_URL } from '../../interceptors';
 import { useRouter } from 'next/router';
 import { useToasts } from 'react-toast-notifications';
+import GlobalContext from '../../context/GlobalContext';
 
 const ProductDetails = (props) => {
   const api = useApiHelper();
   const router = useRouter();
   const { addToast } = useToasts();
+  const gContext = useContext(GlobalContext);
 
   const addToCart = (id) => {
     api.addToCart({ 'product': id }).then(res => {
+      gContext.cartItems();
       router.push(`/cart/${res.id}/`)
     }).catch(error => {
       addToast(error.response.data.detail, { 'appearance': 'error' })
