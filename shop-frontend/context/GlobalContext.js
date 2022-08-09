@@ -8,7 +8,6 @@ const GlobalContext = React.createContext();
 const GlobalProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
   const [user, setUser] = useState({});
-  const [cartCount, setCartCount] = useState();
 
   const api = useApiHelper();
   const router = useRouter();
@@ -22,19 +21,6 @@ const GlobalProvider = ({ children }) => {
     }
   })
 
-  const handleLogout = () => {
-    Cookies.remove('accessToken');
-    deleteAllCookies();
-    localStorage.clear();
-    setIsLoggedIn(false);
-    api.logout().then(res => {
-      router.push('/login')
-    }).catch(error => {
-      Cookies.remove('accessToken');
-      deleteAllCookies();
-    })
-  }
-
   const getUserDetails = () => {
     if (Cookies.get('accessToken')) {
       api.getUser().then(res => {
@@ -45,33 +31,18 @@ const GlobalProvider = ({ children }) => {
     }
   }
 
-  const cartItems = () => {
-    if (Cookies.get('accessToken')) {
-      api.getCartList().then(res => {
-        setCartCount(res.count)
-      }).catch(error => {
-        console.log(error)
-      })
-    }
-  }
-
   useEffect(() => {
     getUserDetails();
   }, [Cookies.get('accessToken')])
 
-  useEffect(() => {
-    cartItems();
-  }, [])
 
   return (
     <GlobalContext.Provider
       value={{
         isLoggedIn,
-        handleLogout,
+        setIsLoggedIn,
         user,
         getUserDetails,
-        cartItems,
-        cartCount
       }}
     >
       {children}

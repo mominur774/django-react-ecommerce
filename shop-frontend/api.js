@@ -19,6 +19,9 @@ const useApiHelper = () => {
         decreaseCartQuentity: (data, params = {}) => axios.post(`product/api/v1/decrease/`, data, { params: params }),
         getCartList: (params = {}) => axios.get(`product/api/v1/cart-list/`, { params: params }),
         deleteCart: (id, params = {}) => axios.delete(`product/api/v1/cart-delete/${id}/`, { params: params }),
+        addToFavorite: (data, params = {}) => axios.post(`product/api/v1/add-to-favorite/`, data, { params: params }),
+        getFavoriteList: (params = {}) => axios.get(`product/api/v1/favorite-list/`, { params: params }),
+        deleteFavorite: (id, params = {}) => axios.delete(`product/api/v1/favorite-delete/${id}/`, { params: params }),
 
         //billing
         createBilling: (data, params = {}) => axios.post(`order/api/v1/create-billing/`, data, { params: params }),

@@ -1,6 +1,6 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, DestroyAPIView
-from product.models import Cart, Product
-from product.api.v1.serializers import CartSerializer, ProductSerializer, DecreseQuentitySerializer
+from product.models import Cart, Product, Favorite
+from product.api.v1.serializers import CartSerializer, ProductSerializer, DecreseQuentitySerializer, FavoriteSerializer
 from rest_framework.permissions import AllowAny
 
 from django.http import Http404
@@ -52,4 +52,22 @@ class CartListView(ListAPIView):
 class DeleteCartView(DestroyAPIView):
     serializer_class = CartSerializer
     queryset = Cart.objects.all()
+    lookup_field = 'pk'
+
+
+class AddToFavorite(CreateAPIView):
+    serializer_class = FavoriteSerializer
+    queryset = Favorite.objects.all()
+
+
+class FavoriteList(ListAPIView):
+    serializer_class = FavoriteSerializer
+
+    def get_queryset(self):
+        return Favorite.objects.filter(user=self.request.user)
+
+
+class DeleteFavoriteView(DestroyAPIView):
+    serializer_class = FavoriteSerializer
+    queryset = Favorite.objects.all()
     lookup_field = 'pk'
