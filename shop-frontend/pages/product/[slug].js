@@ -19,6 +19,16 @@ const ProductDetails = (props) => {
       addToast(error.response.data.detail, { 'appearance': 'error' })
     })
   }
+
+  const addToFavorite = (id) => {
+    api.addToFavorite({ 'product': id }).then(res => {
+      console.log(res)
+    }).catch(error => {
+      addToast(error.response.data.detail, { 'appearance': 'error' })
+    })
+  }
+
+
   return (
     <div className="row">
       <div className="col-12 col-lg-7 col-md-7 col-sm-12">
@@ -29,7 +39,7 @@ const ProductDetails = (props) => {
         <h4 className="mb-3">${props.data.price}</h4>
         <div className="d-flex">
           <button onClick={() => addToCart(props.data.id)} className="btn btn-outline-primary me-2">Add to cart</button>
-          <button className="btn btn-outline-success me-2">Buy now</button>
+          <button onClick={() => addToFavorite(props.data.id)} className="btn btn-outline-success me-2">Add to favorite</button>
         </div>
         <hr />
         <p>{props.data.full_description}</p>
